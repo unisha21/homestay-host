@@ -4,6 +4,7 @@ import 'package:homestay_host/src/features/auth/screens/login_screen.dart';
 import 'package:homestay_host/src/features/auth/screens/sign_up_screen.dart';
 import 'package:homestay_host/src/features/dashboard/screens/home_screen.dart';
 import 'package:homestay_host/src/features/homestay/screens/create_listing.dart';
+import 'package:homestay_host/src/features/homestay/screens/listing_screen.dart';
 
 class Routes {
   static const String splashRoute = '/';
@@ -11,6 +12,8 @@ class Routes {
   static const String registerRoute = '/register';
   static const String homeRoute = '/home';
   static const String createListingRoute = '/create-listing';
+  static const String myListingRoute = '/my-listing';
+  static const String updateListingRoute = '/update-listing';
   static const String notificationRoute = '/notification';
   static const String profileRoute = '/profile';
   static const String recentChats = '/recent-chat';
@@ -35,6 +38,10 @@ class RouteGenerator {
       case Routes.createListingRoute:
         return MaterialPageRoute(
           builder: (_) => const CreateListingScreen(),
+        );
+      case Routes.myListingRoute:
+        return MaterialPageRoute(
+          builder: (_) => const ListingScreen(),
         );
       default:
         return unDefinedRoute();

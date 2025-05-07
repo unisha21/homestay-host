@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:homestay_host/src/features/auth/screens/status_screen.dart';
+import 'package:homestay_host/src/themes/export_themes.dart';
+import 'package:homestay_host/src/themes/extensions.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -38,13 +40,17 @@ class _SplashScreenState extends State<SplashScreen> {
     return Scaffold(
       body: Center(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            SizedBox(height: 230),
-            SizedBox(
-              height: 200,
-              width: 200,
-              child: Text('Logo Here'),
-            ),
+            Center(child: Text(
+              "Mount'n Stay",
+              style: context.theme.textTheme.headlineLarge?.copyWith(
+                fontWeight: FontWeight.w600,
+                fontSize: 32,
+                color: const Color.fromARGB(255, 241, 220, 28),
+              ),
+            ),),
           ],
         ),
       ),
