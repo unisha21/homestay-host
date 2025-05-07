@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:homestay_host/src/themes/extensions.dart';
 
 class BuildTextFormField extends StatelessWidget {
@@ -11,6 +12,7 @@ class BuildTextFormField extends StatelessWidget {
     this.textInputType,
     this.textInputAction,
     this.isEnabled = true,
+    this.inputFormatters,
   });
 
   final TextEditingController controller;
@@ -20,6 +22,7 @@ class BuildTextFormField extends StatelessWidget {
   final TextInputType? textInputType;
   final TextInputAction? textInputAction;
   final bool isEnabled;
+  final List<TextInputFormatter>? inputFormatters;
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +31,7 @@ class BuildTextFormField extends StatelessWidget {
       controller: controller,
       keyboardType: textInputType,
       textInputAction: textInputAction,
+      inputFormatters: inputFormatters,
       validator: validator,
       decoration: InputDecoration(
         enabled: isEnabled,
