@@ -62,6 +62,8 @@ dependencies:
   url_launcher: ^6.3.1
   flutter_svg: ^2.1.0
   path: ^1.9.1
+  firebase_app_check: ^0.3.2+5
+  cached_network_image: ^3.4.1
 
 
 
