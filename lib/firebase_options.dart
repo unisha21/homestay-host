@@ -53,10 +53,10 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyCifLl8_1kE_IT1kaZP0cXNVJLCEHb5LTE',
-    appId: '1:798845600680:android:d67fa22d5fb39f8debd39d',
-    messagingSenderId: '798845600680',
-    projectId: 'homestayapp-d1c41',
-    storageBucket: 'homestayapp-d1c41.firebasestorage.app',
+    apiKey: 'AIzaSyC9ymvOA1UNAafDU3tUiVy8Gn9eea0-fUs',
+    appId: '1:67672590699:android:79121abf150e36c634642e',
+    messagingSenderId: '67672590699',
+    projectId: 'cateringservicemgmt',
+    storageBucket: 'cateringservicemgmt.appspot.com',
   );
 }
