@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:homestay_host/src/common/route_manager.dart';
 import 'package:homestay_host/src/features/auth/screens/auth_provider.dart';
 import 'package:homestay_host/src/features/shared/data/user_provider.dart';
 
@@ -85,10 +86,7 @@ class MyDrawer extends ConsumerWidget {
                 ),
                 onTap: () {
                   Navigator.pop(context);
-                  // Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(builder: (_) => const CreateMenuScreen()),
-                  // );
+                  Navigator.pushNamed(context, '/create-listing');
                 },
               ),
               ListTile(
@@ -99,10 +97,7 @@ class MyDrawer extends ConsumerWidget {
                 ),
                 onTap: () {
                   Navigator.pop(context);
-                  // Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(builder: (_) => const MenuScreen()),
-                  // );
+                  Navigator.pushNamed(context, Routes.myListingRoute);
                 },
               ),
               ListTile(

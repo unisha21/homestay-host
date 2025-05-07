@@ -14,7 +14,6 @@ class HomestayDatasource {
   final uid = FirebaseAuth.instance.currentUser!.uid;
 
   Future<String> createHomestay(HomestayPayload payload) async {
-    print('Creating homestay with payload: $payload');
     try {
       final userData = await _userDb.doc(uid).get();
       List<String> imageUrls = [];
@@ -24,7 +23,6 @@ class HomestayDatasource {
       String homestayId = homestayDocRef.id;
 
       if (payload.images != null && payload.images!.isNotEmpty) {
-        print('Uploading images...');
         for (int i = 0; i < payload.images!.length; i++) {
           var imageFile = payload.images![i];
           File image = File(imageFile.path);
@@ -47,8 +45,6 @@ class HomestayDatasource {
         }
       }
 
-      print('creating homestay document...');
-
       await homestayDb.add({
         'id': homestayId,
         'hostId': userData.id,
@@ -57,11 +53,10 @@ class HomestayDatasource {
         'location': payload.location,
         'pricePerNight': payload.pricePerNight,
         'amenities': payload.amenities,
-        'images': [],
+        'images': imageUrls,
       });
       return 'success';
     } on FirebaseException catch (e) {
-      print('Error creating homestay: ${e.message}');
       return e.message ?? "An error occurred";
     }
   }
@@ -103,6 +98,7 @@ class HomestayDatasource {
   }
 
   Future<String> deleteHomeStay(String homeStayid) async {
+    print('Deleting homestay with ID: $homeStayid');
     try {
       await homestayDb.doc(homeStayid).delete();
       return 'success';

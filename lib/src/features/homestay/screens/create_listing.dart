@@ -310,10 +310,8 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
                       amenities: amenities,
                       images: images,
                     );
-                    print(payload.toJson());
                     // Handle form submission
                     buildLoadingDialog(context, "Enlisting your property....");
-                    print('creating homestay with payload: ${payload.toJson()}');
                     final response = await HomestayDatasource().createHomestay(
                       payload,
                     );
