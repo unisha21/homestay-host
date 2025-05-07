@@ -46,7 +46,6 @@ class HomestayDatasource {
       }
 
       await homestayDb.add({
-        'id': homestayId,
         'hostId': userData.id,
         'title': payload.name,
         'description': payload.description,
@@ -70,7 +69,10 @@ class HomestayDatasource {
       final homestayList = await Future.wait(
         response.docs.map((doc) async {
           final data = doc.data();
-          return HomestayModel.fromJson(data);
+          return HomestayModel.fromJson({
+            ...data,
+            'id': doc.id,
+          });
         }),
       );
       return homestayList;
@@ -81,6 +83,7 @@ class HomestayDatasource {
     required String homeStayId,
     required HomestayPayload payload,
   }) async {
+    print('Updating homestay with ID: $homeStayId');
     try {
       final userData = await _userDb.doc(uid).get();
       await homestayDb.doc(homeStayId).update({

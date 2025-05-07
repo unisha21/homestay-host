@@ -29,8 +29,11 @@ class ListingScreen extends ConsumerWidget {
               return _ListingCard(
                 homestay: homestay,
                 onEdit: () {
-                  // TODO: Implement edit functionality
-                  print('Edit ${homestay.title}');
+                  Navigator.pushNamed(
+                    context,
+                    Routes.updateListingRoute,
+                    arguments: homestay,
+                  );
                 },
                 onDelete: () {
                   _showDeleteConfirmationDialog(context, homestay, ref);
@@ -68,8 +71,7 @@ class ListingScreen extends ConsumerWidget {
                 final response = await HomestayDatasource().deleteHomeStay(
                   homestay.id,
                 );
-                print('Deleting homestay with ID: ${homestay.id}');
-                Navigator.of(context).pop(); 
+                if(context.mounted) Navigator.of(context).pop();
                 if (response != 'success') {
                   if (!context.mounted) return;
                   buildErrorDialog(context, response);
@@ -81,6 +83,7 @@ class ListingScreen extends ConsumerWidget {
                     context,
                     'Listing deleted successfully',
                     () {
+                      Navigator.of(context).pop(); // Close the success dialog
                       Navigator.pushNamed(context, Routes.homeRoute);
                     },
                   );

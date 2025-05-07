@@ -3,8 +3,10 @@ import 'package:homestay_host/src/common/splash_screen.dart';
 import 'package:homestay_host/src/features/auth/screens/login_screen.dart';
 import 'package:homestay_host/src/features/auth/screens/sign_up_screen.dart';
 import 'package:homestay_host/src/features/dashboard/screens/home_screen.dart';
+import 'package:homestay_host/src/features/homestay/domain/models/homestay_model.dart';
 import 'package:homestay_host/src/features/homestay/screens/create_listing.dart';
 import 'package:homestay_host/src/features/homestay/screens/listing_screen.dart';
+import 'package:homestay_host/src/features/homestay/screens/update_homestay.dart';
 
 class Routes {
   static const String splashRoute = '/';
@@ -42,6 +44,11 @@ class RouteGenerator {
       case Routes.myListingRoute:
         return MaterialPageRoute(
           builder: (_) => const ListingScreen(),
+        );
+      case Routes.updateListingRoute:
+        final args = settings.arguments as HomestayModel;
+        return MaterialPageRoute(
+          builder: (_) => UpdateHomestayScreen(homestay: args,),
         );
       default:
         return unDefinedRoute();
