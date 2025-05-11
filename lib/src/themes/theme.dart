@@ -28,6 +28,26 @@ ThemeData lightTheme() => ThemeData(
     outline: const Color(0xff79747E),
     outlineVariant: const Color(0xffCAC4D0),
   ),
+  chipTheme: ChipThemeData(
+    selectedColor: AppColor.primaryRed,
+    secondarySelectedColor: AppColor.primaryRed,
+    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+    labelStyle: TextStyle(
+      fontSize: 14,
+      fontWeight: FontWeight.w600,
+      color: AppColor.darkColor,
+    ),
+    secondaryLabelStyle: TextStyle(
+      fontSize: 14,
+      fontWeight: FontWeight.w600,
+      color: AppColor.darkColor,
+    ),
+    shape: RoundedRectangleBorder(
+      side: const BorderSide(color: AppColor.greyColor, width: .8),
+      borderRadius: BorderRadius.circular(8),
+    ),
+  ),
+  splashColor: Colors.black12,
   fontFamily: 'Poppins',
   textTheme: const TextTheme(
     displayLarge: TextStyle(fontSize: 57, fontWeight: FontWeight.normal),
@@ -60,9 +80,7 @@ ThemeData lightTheme() => ThemeData(
     style: ElevatedButton.styleFrom(
       disabledBackgroundColor: AppColor.containerColor.withOpacity(0.5),
       minimumSize: Size(double.infinity, 50),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8)
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       textStyle: TextStyle(
         fontWeight: FontWeight.w600,
         fontSize: 16,

@@ -72,10 +72,7 @@ class MyDrawer extends ConsumerWidget {
                 ),
                 onTap: () {
                   Navigator.pop(context);
-                  // Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(builder: (_) => const ProfileScreen()),
-                  // );
+                  Navigator.pushNamed(context, Routes.profileRoute);
                 },
               ),
               ListTile(
