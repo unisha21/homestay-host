@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:homestay_host/src/themes/extensions.dart';
 
 class CachedImage extends StatelessWidget {
   final String imageUrl;
@@ -26,17 +27,17 @@ class CachedImage extends StatelessWidget {
         height: height,
         width: width,
         fit: fit,
-        placeholder: (context, url) => Container(
-          color: Colors.grey.shade200,
-          child: const Center(
+        progressIndicatorBuilder: (context, url, progress) {
+          return Center(
             child: CircularProgressIndicator(
-              color: Colors.black54,
+              value: progress.progress,
               strokeWidth: 2,
+              color: context.theme.colorScheme.secondary,
             ),
-          ),
-        ),
+          );
+        },
         errorWidget: (context, url, error) => Container(
-          color: Colors.grey.shade300,
+          color: Colors.grey.shade200,
           child: const Icon(
             Icons.error_outline,
             size: 16,
