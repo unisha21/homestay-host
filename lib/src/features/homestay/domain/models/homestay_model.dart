@@ -7,6 +7,7 @@ class HomestayModel {
   final String pricePerNight;
   final List<String> amenities;
   final List<String> images;
+  final List<NearByPlace>? nearByPlaces;
 
   HomestayModel({
     required this.id,
@@ -17,6 +18,7 @@ class HomestayModel {
     required this.pricePerNight,
     required this.amenities,
     required this.images,
+    this.nearByPlaces,
   });
 
   factory HomestayModel.fromJson(Map<String, dynamic> json) {
@@ -29,6 +31,9 @@ class HomestayModel {
       pricePerNight: json['pricePerNight'] as String,
       amenities: List<String>.from(json['amenities'] as List<dynamic>),
       images: List<String>.from(json['images'] as List<dynamic>),
+      nearByPlaces: (json['nearByPlaces'] as List<dynamic>?)
+          ?.map((e) => NearByPlace.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
   }
 
@@ -42,5 +47,23 @@ class HomestayModel {
       'amenities': amenities,
       'images': images,
     };
+  }
+}
+
+class NearByPlace {
+  final String name;
+  final String description;
+  final String? distance;
+
+  NearByPlace({required this.name, required this.description, this.distance});
+  factory NearByPlace.fromJson(Map<String, dynamic> json) {
+    return NearByPlace(
+      name: json['name'] as String,
+      description: json['description'] as String,
+      distance: json['distance'] as String?,
+    );
+  }
+  Map<String, dynamic> toJson() {
+    return {'name': name, 'description': description, 'distance': distance};
   }
 }

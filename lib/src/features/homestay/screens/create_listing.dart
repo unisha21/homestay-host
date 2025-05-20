@@ -92,7 +92,6 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print('building');
     return Scaffold(
       appBar: AppBar(title: const Text('Create Listing'), centerTitle: true),
       body: Form(
@@ -293,7 +292,6 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
                   final navigator = Navigator.of(context);
                   if (_formKey.currentState!.validate()) {
                     if (images.length < 4) {
-                      print('Please select at least 4 images');
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                           content: Text('Please select at least 4 images.'),

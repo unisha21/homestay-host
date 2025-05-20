@@ -98,6 +98,8 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
                     ),
                   ),
                   _IncludedAmenities(amenities: widget._homestay.amenities),
+                  const SizedBox(height: 4),
+                  NearByPlaces(),
                 ],
               ),
             ),
@@ -110,45 +112,66 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
 
 class _IncludedAmenities extends StatelessWidget {
   final List<String> amenities;
-  const _IncludedAmenities({super.key, required this.amenities});
+  const _IncludedAmenities({required this.amenities});
+
+  Map<String, dynamic> get amenitiesMap {
+    return {
+      'WiFi': Icons.wifi,
+      'Parking': Icons.local_parking,
+      'Breakfast': Icons.free_breakfast,
+      'Air Conditioning': Icons.ac_unit,
+      'Swimming Pool': Icons.pool,
+      'TV': Icons.tv,
+      'Kitchen': Icons.kitchen,
+      'Washer': Icons.local_laundry_service,
+      'Pet Friendly': Icons.pets,
+      'Gym': Icons.fitness_center,
+      'Elevator': Icons.elevator,
+      'Fireplace': Icons.fireplace,
+      'Balcony': Icons.balcony,
+      'Smoke Detector': Icons.smoke_free,
+      // Add more mappings as needed
+    };
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.grey.shade200,
-        borderRadius: BorderRadius.circular(8),
-      ),
+    return Padding(
+      padding: const EdgeInsets.only(left: 8.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         spacing: 8,
-        children: [
-          _buildIconWithText(context, icon: Icons.wifi, text: 'Free Wi-Fi'),
-          _buildIconWithText(context, icon: Icons.kitchen, text: 'Kitchen'),
-          _buildIconWithText(context, icon: Icons.tv, text: 'TV'),
-          _buildIconWithText(context, icon: Icons.pool, text: 'Swimming Pool'),
-        ],
+        children: List.generate(amenities.length, (index) {
+          return Text(
+            "- ${amenities[index]}",
+            style: context.theme.textTheme.bodyMedium?.copyWith(
+              fontWeight: FontWeight.w400,
+              color: context.theme.colorScheme.onSurfaceVariant,
+            ),
+          );
+        }),
       ),
     );
   }
+}
 
-  Widget _buildIconWithText(
-    BuildContext context, {
-    required IconData icon,
-    required String text,
-  }) {
-    return Row(
+
+class NearByPlaces extends StatelessWidget {
+  const NearByPlaces({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       spacing: 8,
       children: [
-        Icon(icon, color: context.theme.colorScheme.primary, size: 16),
         Text(
-          text,
-          style: context.theme.textTheme.bodyMedium?.copyWith(
-            fontWeight: FontWeight.w400,
-            color: context.theme.colorScheme.onSurfaceVariant,
+          'Nearby Places',
+          style: context.theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.w600,
           ),
         ),
+        
       ],
     );
   }
