@@ -46,7 +46,7 @@ class _UpdateHomestayScreenState extends ConsumerState<UpdateHomestayScreen> {
     // Prefill the form with existing data
     _titleController.text = widget.homestay.title;
     _descriptionController.text = widget.homestay.description;
-    _priceController.text = widget.homestay.pricePerNight;
+    _priceController.text = widget.homestay.pricePerNight.toString();
     _locationController.text = widget.homestay.location;
     amenities = widget.homestay.amenities;
     existingImages = widget.homestay.images;

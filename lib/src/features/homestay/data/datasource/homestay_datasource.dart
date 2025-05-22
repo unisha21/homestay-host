@@ -50,7 +50,7 @@ class HomestayDatasource {
         'title': payload.name,
         'description': payload.description,
         'location': payload.location,
-        'pricePerNight': payload.pricePerNight,
+        'pricePerNight': double.tryParse(payload.pricePerNight) ?? 1800.0,
         'amenities': payload.amenities,
         'images': imageUrls,
       });
@@ -91,7 +91,7 @@ class HomestayDatasource {
         'title': payload.name,
         'description': payload.description,
         'location': payload.location,
-        'pricePerNight': payload.pricePerNight,
+        'pricePerNight': double.tryParse(payload.pricePerNight) ?? 1800.0,
         'amenities': payload.amenities,
       });
       return 'Updated';
