@@ -52,6 +52,7 @@ class HomestayDatasource {
         'location': payload.location,
         'pricePerNight': double.tryParse(payload.pricePerNight) ?? 1800.0,
         'amenities': payload.amenities,
+        'nearByPlaces': payload.nearByPlaces?.map((e) => e.toJson()).toList(),
         'images': imageUrls,
       });
       return 'success';
@@ -83,7 +84,6 @@ class HomestayDatasource {
     required String homeStayId,
     required HomestayPayload payload,
   }) async {
-    print('Updating homestay with ID: $homeStayId');
     try {
       final userData = await _userDb.doc(uid).get();
       await homestayDb.doc(homeStayId).update({
@@ -93,6 +93,7 @@ class HomestayDatasource {
         'location': payload.location,
         'pricePerNight': double.tryParse(payload.pricePerNight) ?? 1800.0,
         'amenities': payload.amenities,
+        'nearByPlaces': payload.nearByPlaces?.map((e) => e.toJson()).toList(),
       });
       return 'Updated';
     } on FirebaseException catch (e) {

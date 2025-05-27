@@ -99,7 +99,7 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
                   ),
                   _IncludedAmenities(amenities: widget._homestay.amenities),
                   const SizedBox(height: 4),
-                  NearByPlaces(),
+                  NearByPlaces(nearByPlaces: widget._homestay.nearByPlaces ?? []),
                 ],
               ),
             ),
@@ -157,10 +157,14 @@ class _IncludedAmenities extends StatelessWidget {
 
 
 class NearByPlaces extends StatelessWidget {
-  const NearByPlaces({super.key});
+  final List<NearByPlace> nearByPlaces;
+  const NearByPlaces({super.key, required this.nearByPlaces});
 
   @override
   Widget build(BuildContext context) {
+    if(nearByPlaces.isEmpty) {
+      return SizedBox.shrink();
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       spacing: 8,
@@ -169,6 +173,37 @@ class NearByPlaces extends StatelessWidget {
           'Nearby Places',
           style: context.theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.w600,
+          ),
+        ),
+        ...nearByPlaces.map(
+          (place) => Padding(
+            padding: const EdgeInsets.only(left: 8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              spacing: 4,
+              children: [
+                Text(
+                  place.name,
+                  style: context.theme.textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                Text(
+                  place.description,
+                  style: context.theme.textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.w400,
+                    color: context.theme.colorScheme.onSurfaceVariant,
+                  ),
+                ),
+                if (place.distance != null)
+                  Text(
+                    'Distance: ${place.distance}',
+                    style: context.theme.textTheme.bodySmall?.copyWith(
+                      color: context.theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+              ],
+            ),
           ),
         ),
         

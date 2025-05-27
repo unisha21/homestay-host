@@ -9,6 +9,7 @@ import 'package:homestay_host/src/features/auth/screens/widgets/build_dialogs.da
 import 'package:homestay_host/src/features/dashboard/screens/home_screen.dart';
 import 'package:homestay_host/src/features/homestay/data/datasource/homestay_datasource.dart';
 import 'package:homestay_host/src/features/homestay/data/home_stay_provider/home_stay_provider.dart';
+import 'package:homestay_host/src/features/homestay/domain/models/homestay_model.dart';
 import 'package:homestay_host/src/features/homestay/domain/models/homestay_payload.dart';
 import 'package:homestay_host/src/features/homestay/screens/widgets/input_chip_field.dart';
 import 'package:homestay_host/src/themes/extensions.dart';
@@ -18,19 +19,20 @@ class CreateListingScreen extends ConsumerStatefulWidget {
   const CreateListingScreen({super.key});
 
   @override
-  ConsumerState<CreateListingScreen> createState() => _CreateListingScreenState();
+  ConsumerState<CreateListingScreen> createState() =>
+      _CreateListingScreenState();
 }
 
 class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   List<XFile> images = [];
+  List<NearByPlace> nearByPlaces = [];
 
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
   final _priceController = TextEditingController();
   final _locationController = TextEditingController();
-  final _amenitiesController = TextEditingController();
 
   List<String> amenities = <String>[];
 
@@ -167,6 +169,8 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
                           });
                         },
                       ),
+                      const SizedBox(height: 16),
+                      _buildNearbyPlacesSection(),
                       const SizedBox(height: 16),
                       BuildTextField(
                         maxLine: 4,
@@ -307,6 +311,7 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
                       pricePerNight: _priceController.text.trim(),
                       amenities: amenities,
                       images: images,
+                      nearByPlaces: nearByPlaces,
                     );
                     // Handle form submission
                     buildLoadingDialog(context, "Enlisting your property....");
@@ -316,10 +321,7 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
                     navigator.pop();
                     if (response != 'success') {
                       if (!context.mounted) return;
-                      buildErrorDialog(
-                        context,
-                        response,
-                      );
+                      buildErrorDialog(context, response);
                     } else {
                       if (!context.mounted) return;
                       ref.invalidate(homeStayProvider);
@@ -338,6 +340,160 @@ class _CreateListingScreenState extends ConsumerState<CreateListingScreen> {
           ],
         ),
       ),
+    );
+  }
+
+  // Add this new method to _CreateListingScreenState
+  Widget _buildNearbyPlacesSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Nearby Places',
+              style: context.theme.textTheme.bodyLarge?.copyWith(
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            IconButton(
+              icon: const Icon(Icons.add_circle_outline),
+              onPressed: () => _addOrEditNearbyPlace(),
+            ),
+          ],
+        ),
+        if (nearByPlaces.isEmpty)
+          const Padding(
+            padding: EdgeInsets.symmetric(vertical: 8.0),
+            child: Text(
+              'No nearby places added yet. Click the + icon to add one.',
+              style: TextStyle(color: Colors.grey),
+            ),
+          )
+        else
+          ListView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: nearByPlaces.length,
+            itemBuilder: (context, index) {
+              final place = nearByPlaces[index];
+              return Card(
+                margin: const EdgeInsets.symmetric(vertical: 4.0),
+                child: ListTile(
+                  title: Text(place.name),
+                  subtitle: Text(
+                    '${place.description}${place.distance != null && place.distance!.isNotEmpty ? " - ${place.distance} away" : ""}',
+                  ),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.edit_outlined, size: 20),
+                        onPressed: () => _addOrEditNearbyPlace(index: index),
+                      ),
+                      IconButton(
+                        icon: const Icon(
+                          Icons.delete_outline,
+                          size: 20,
+                          color: Colors.redAccent,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            nearByPlaces.removeAt(index);
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+      ],
+    );
+  }
+
+  void _addOrEditNearbyPlace({int? index}) {
+    final placeNameController = TextEditingController(
+      text: index != null ? nearByPlaces[index].name : '',
+    );
+    final placeDescriptionController = TextEditingController(
+      text: index != null ? nearByPlaces[index].description : '',
+    );
+    final distanceController = TextEditingController(
+      text: index != null ? nearByPlaces[index].distance : '',
+    );
+
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          insetPadding: const EdgeInsets.symmetric(
+            horizontal: 16.0,
+            vertical: 8.0,
+          ),
+          title: Text(index == null ? 'Add Nearby Place' : 'Edit Nearby Place'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                BuildTextFormField(
+                  controller: placeNameController,
+                  labelText: 'Place Name',
+                  validator:
+                      (value) =>
+                          value!.isEmpty ? 'Please enter place name' : null,
+                ),
+                const SizedBox(height: 16),
+                BuildTextField(
+                  controller: placeDescriptionController,
+                  labelText: 'Description',
+                  validator:
+                      (value) =>
+                          value!.isEmpty ? 'Please enter description' : null,
+                  maxLine: 4,
+                ),
+                const SizedBox(height: 16),
+                BuildTextFormField(
+                  controller: distanceController,
+                  labelText: 'Distance (e.g., 500m, 1km)',
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+              },
+            ),
+            TextButton(
+              child: Text(index == null ? 'Add' : 'Save'),
+              onPressed: () {
+                if (placeNameController.text.isEmpty ||
+                    placeDescriptionController.text.isEmpty) {
+                  return;
+                }
+                final newPlace = NearByPlace(
+                  name: placeNameController.text,
+                  description: placeDescriptionController.text,
+                  distance: distanceController.text,
+                );
+                setState(() {
+                  if (index != null) {
+                    nearByPlaces[index] = newPlace;
+                  } else {
+                    nearByPlaces.add(newPlace);
+                  }
+                });
+                Navigator.of(dialogContext).pop();
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }

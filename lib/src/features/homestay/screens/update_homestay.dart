@@ -29,12 +29,13 @@ class _UpdateHomestayScreenState extends ConsumerState<UpdateHomestayScreen> {
 
   List<XFile> images = [];
   List<String> existingImages = [];
+  List<NearByPlace> nearByPlaces = []; // Added
 
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
   final _priceController = TextEditingController();
   final _locationController = TextEditingController();
-  final _amenitiesController = TextEditingController();
+  // final _amenitiesController = TextEditingController(); // Removed
 
   List<String> amenities = <String>[];
 
@@ -46,10 +47,28 @@ class _UpdateHomestayScreenState extends ConsumerState<UpdateHomestayScreen> {
     // Prefill the form with existing data
     _titleController.text = widget.homestay.title;
     _descriptionController.text = widget.homestay.description;
-    _priceController.text = widget.homestay.pricePerNight.toString();
+    _priceController.text = widget.homestay.pricePerNight.toStringAsFixed(
+      0,
+    ); // Ensure correct formatting
     _locationController.text = widget.homestay.location;
-    amenities = widget.homestay.amenities;
-    existingImages = widget.homestay.images;
+    amenities = List<String>.from(
+      widget.homestay.amenities,
+    ); // Ensure mutable list
+    existingImages = List<String>.from(
+      widget.homestay.images,
+    ); // Ensure mutable list
+    // Initialize nearByPlaces, ensuring it's a new mutable list
+    nearByPlaces =
+        widget.homestay.nearByPlaces
+            ?.map(
+              (place) => NearByPlace(
+                name: place.name,
+                description: place.description,
+                distance: place.distance,
+              ),
+            )
+            .toList() ??
+        [];
   }
 
   Future<void> _pickImage() async {
@@ -179,6 +198,8 @@ class _UpdateHomestayScreenState extends ConsumerState<UpdateHomestayScreen> {
                         },
                       ),
                       const SizedBox(height: 16),
+                      _buildNearbyPlacesSection(), // Added
+                      const SizedBox(height: 16),
                       BuildTextField(
                         maxLine: 4,
                         controller: _descriptionController,
@@ -226,8 +247,9 @@ class _UpdateHomestayScreenState extends ConsumerState<UpdateHomestayScreen> {
                                   top: 2,
                                   right: 2,
                                   child: InkWell(
-                                    onTap: () =>
-                                        _removeImage(idx, isExisting: true),
+                                    onTap:
+                                        () =>
+                                            _removeImage(idx, isExisting: true),
                                     child: Container(
                                       padding: const EdgeInsets.all(3),
                                       decoration: const BoxDecoration(
@@ -346,6 +368,7 @@ class _UpdateHomestayScreenState extends ConsumerState<UpdateHomestayScreen> {
                       pricePerNight: _priceController.text.trim(),
                       amenities: amenities,
                       images: images,
+                      nearByPlaces: nearByPlaces, // Added
                     );
 
                     buildLoadingDialog(context, "Updating your property...");
@@ -356,10 +379,7 @@ class _UpdateHomestayScreenState extends ConsumerState<UpdateHomestayScreen> {
                     navigator.pop(); // Close the loading dialog
                     if (response != 'Updated') {
                       if (!context.mounted) return;
-                      buildErrorDialog(
-                        context,
-                        response,
-                      );
+                      buildErrorDialog(context, response);
                     } else {
                       if (!context.mounted) return;
                       ref.invalidate(homeStayProvider);
@@ -377,6 +397,161 @@ class _UpdateHomestayScreenState extends ConsumerState<UpdateHomestayScreen> {
           ],
         ),
       ),
+    );
+  }
+
+  // Added: _buildNearbyPlacesSection method (similar to CreateListingScreen)
+  Widget _buildNearbyPlacesSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Nearby Places',
+              style: context.theme.textTheme.bodyLarge?.copyWith(
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            IconButton(
+              icon: const Icon(Icons.add_circle_outline),
+              onPressed: () => _addOrEditNearbyPlace(),
+            ),
+          ],
+        ),
+        if (nearByPlaces.isEmpty)
+          const Padding(
+            padding: EdgeInsets.symmetric(vertical: 8.0),
+            child: Text(
+              'No nearby places added yet. Click the + icon to add one.',
+              style: TextStyle(color: Colors.grey),
+            ),
+          )
+        else
+          ListView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: nearByPlaces.length,
+            itemBuilder: (context, index) {
+              final place = nearByPlaces[index];
+              return Card(
+                margin: const EdgeInsets.symmetric(vertical: 4.0),
+                child: ListTile(
+                  title: Text(place.name),
+                  subtitle: Text(
+                    '${place.description}${place.distance != null && place.distance!.isNotEmpty ? " - ${place.distance} away" : ""}',
+                  ),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.edit_outlined, size: 20),
+                        onPressed: () => _addOrEditNearbyPlace(index: index),
+                      ),
+                      IconButton(
+                        icon: const Icon(
+                          Icons.delete_outline,
+                          size: 20,
+                          color: Colors.redAccent,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            nearByPlaces.removeAt(index);
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+      ],
+    );
+  }
+
+  // Added: _addOrEditNearbyPlace method (using plain Dialog, similar to CreateListingScreen)
+  void _addOrEditNearbyPlace({int? index}) {
+    final placeNameController = TextEditingController(
+      text: index != null ? nearByPlaces[index].name : '',
+    );
+    final placeDescriptionController = TextEditingController(
+      text: index != null ? nearByPlaces[index].description : '',
+    );
+    final distanceController = TextEditingController(
+      text: index != null ? nearByPlaces[index].distance : '',
+    );
+
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          insetPadding: const EdgeInsets.symmetric(
+            horizontal: 16.0,
+            vertical: 8.0,
+          ),
+          title: Text(index == null ? 'Add Nearby Place' : 'Edit Nearby Place'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                BuildTextFormField(
+                  controller: placeNameController,
+                  labelText: 'Place Name',
+                  validator:
+                      (value) =>
+                          value!.isEmpty ? 'Please enter place name' : null,
+                ),
+                const SizedBox(height: 16),
+                BuildTextField(
+                  controller: placeDescriptionController,
+                  labelText: 'Description',
+                  validator:
+                      (value) =>
+                          value!.isEmpty ? 'Please enter description' : null,
+                  maxLine: 4,
+                ),
+                const SizedBox(height: 16),
+                BuildTextFormField(
+                  controller: distanceController,
+                  labelText: 'Distance (e.g., 500m, 1km)',
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+              },
+            ),
+            TextButton(
+              child: Text(index == null ? 'Add' : 'Save'),
+              onPressed: () {
+                if (placeNameController.text.isEmpty ||
+                    placeDescriptionController.text.isEmpty) {
+                  return;
+                }
+                final newPlace = NearByPlace(
+                  name: placeNameController.text,
+                  description: placeDescriptionController.text,
+                  distance: distanceController.text,
+                );
+                setState(() {
+                  if (index != null) {
+                    nearByPlaces[index] = newPlace;
+                  } else {
+                    nearByPlaces.add(newPlace);
+                  }
+                });
+                Navigator.of(dialogContext).pop();
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }

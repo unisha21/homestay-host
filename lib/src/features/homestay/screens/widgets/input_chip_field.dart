@@ -26,7 +26,7 @@ class EditableChipFieldState extends State<EditableChipField> {
   @override
   void initState() {
     super.initState();
-    menuItems = widget.initialValues;
+    menuItems = List<String>.from(widget.initialValues); // Ensure mutable copy
   }
 
   @override
@@ -74,12 +74,7 @@ class EditableChipFieldState extends State<EditableChipField> {
       setState(() {
         menuItems = <String>[...menuItems, text.trim()];
       });
-
-      // Check if the Enter key is pressed
-      if (RawKeyboard.instance.keysPressed.contains(LogicalKeyboardKey.enter)) {
-        // If Enter key is not pressed, request focus to keep the keyboard open
-        FocusScope.of(context).requestFocus(FocusNode());
-      }
+      // Focus management will be handled by ChipsInputState
       widget.onChanged(menuItems);
     }
   }
@@ -127,6 +122,7 @@ class ChipsInput<T> extends StatefulWidget {
 class ChipsInputState<T> extends State<ChipsInput<T>> {
   @visibleForTesting
   late final ChipsInputEditingController<T> controller;
+  late final FocusNode _textFieldFocusNode; // Added FocusNode
 
 
   String _previousText = '';
@@ -135,6 +131,7 @@ class ChipsInputState<T> extends State<ChipsInput<T>> {
   @override
   void initState() {
     super.initState();
+    _textFieldFocusNode = FocusNode(); // Initialize FocusNode
     controller = ChipsInputEditingController<T>(
       <T>[...widget.values],
       widget.chipBuilder,
@@ -144,6 +141,7 @@ class ChipsInputState<T> extends State<ChipsInput<T>> {
 
   @override
   void dispose() {
+    _textFieldFocusNode.dispose(); // Dispose FocusNode
     controller.removeListener(_textListener);
     controller.dispose();
 
@@ -196,20 +194,38 @@ class ChipsInputState<T> extends State<ChipsInput<T>> {
     controller.updateValues(<T>[...widget.values]);
 
     return TextField(
+      focusNode: _textFieldFocusNode, // Assign FocusNode
       minLines: 1,
       maxLines: widget.maxLine,
       style: widget.style,
       strutStyle: widget.strutStyle,
       controller: controller,
-      onChanged: (String value) =>
-          widget.onTextChanged?.call(controller.textWithoutReplacements),
-      onSubmitted: (String value) {
-        widget.onSubmitted?.call(controller.textWithoutReplacements);
-        controller.clear();
+      onChanged: (String value) { // value is the raw text from TextField
+        String currentText = controller.textWithoutReplacements;
+        widget.onTextChanged?.call(currentText);
+
+        if (currentText.endsWith(' ') && currentText.trim().isNotEmpty) {
+          final String chipText = currentText.substring(0, currentText.length - 1).trim();
+          if (chipText.isNotEmpty) {
+            widget.onSubmitted?.call(chipText);
+            controller.clearComposing();
+            controller.clear(); // Clears the input field
+            _textFieldFocusNode.requestFocus(); // Re-focus after submission via space
+          } else {
+            // User just typed a space after another space or at the beginning, clear the current text.
+            controller.clearComposing();
+            controller.clear();
+            _textFieldFocusNode.requestFocus();
+          }
+        }
       },
-      onEditingComplete: (){
-        FocusScope.of(context).requestFocus();
+      onSubmitted: (String value) { // value is controller.textWithoutReplacements
+        widget.onSubmitted?.call(value);
+        controller.clearComposing();
+        controller.clear(); // Clears the input field
+        _textFieldFocusNode.requestFocus(); // Re-focus after submission via Enter
       },
+      // onEditingComplete removed to simplify focus management, handled by onSubmitted/onChanged
       textInputAction: TextInputAction.done,
     );
   }

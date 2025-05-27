@@ -1,3 +1,4 @@
+import 'package:homestay_host/src/features/homestay/domain/models/homestay_model.dart';
 import 'package:image_picker/image_picker.dart';
 
 class HomestayPayload {
@@ -7,6 +8,7 @@ class HomestayPayload {
   final String pricePerNight;
   final List<String> amenities;
   List<XFile>? images;
+  final List<NearByPlace>? nearByPlaces;
 
   HomestayPayload({
     required this.name,
@@ -15,6 +17,7 @@ class HomestayPayload {
     required this.pricePerNight,
     required this.amenities,
     this.images,
+    this.nearByPlaces,
   });
 
   Map<String, dynamic> toJson() {
@@ -25,6 +28,7 @@ class HomestayPayload {
       'pricePerNight': pricePerNight,
       'amenities': amenities,
       'images': images,
+      'nearByPlaces': nearByPlaces?.map((e) => e.toJson()).toList(),
     };
   }
 }

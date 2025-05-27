@@ -46,6 +46,7 @@ class HomestayModel {
       'pricePerNight': pricePerNight,
       'amenities': amenities,
       'images': images,
+      'nearByPlaces': nearByPlaces?.map((e) => e.toJson()).toList(),
     };
   }
 }
