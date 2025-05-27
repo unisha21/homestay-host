@@ -29,7 +29,7 @@ class OptionCard extends StatelessWidget {
           padding: EdgeInsets.symmetric(horizontal: 10),
           child: Row(
             children: [
-              Icon(iconData),
+              Icon(iconData, size: 18,),
               SizedBox(width: 15),
               Expanded(
                 child: Padding(
@@ -41,23 +41,19 @@ class OptionCard extends StatelessWidget {
                       Text(
                         text,
                         textAlign: TextAlign.start,
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Theme.of(context).colorScheme.inversePrimary
-                        ),
+                        style: Theme.of(context).textTheme.bodyMedium,
                       ),
                       Text(
                         subText,
                         textAlign: TextAlign.start,
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: Theme.of(context).colorScheme.inversePrimary
-                        ),
+                        style: Theme.of(context).textTheme.bodySmall,
                       ),
                     ],
                   ),
                 ),
               ),
               const Icon(
-                Icons.arrow_forward_ios,
+                Icons.chevron_right,
                 size: 20,
               ),
             ],
