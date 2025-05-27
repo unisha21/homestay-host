@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:homestay_host/src/common/splash_screen.dart';
 import 'package:homestay_host/src/features/auth/screens/login_screen.dart';
 import 'package:homestay_host/src/features/auth/screens/sign_up_screen.dart';
+import 'package:homestay_host/src/features/chat/screens/recent_chat_screen.dart';
 import 'package:homestay_host/src/features/dashboard/screens/home_screen.dart';
 import 'package:homestay_host/src/features/homestay/domain/models/homestay_model.dart';
 import 'package:homestay_host/src/features/homestay/screens/create_listing.dart';
@@ -48,9 +49,7 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const ListingScreen());
       case Routes.serviceDetailRoute:
         final args = settings.arguments as HomestayModel;
-        return MaterialPageRoute(
-          builder: (_) => ServiceDetailScreen(args),
-        );
+        return MaterialPageRoute(builder: (_) => ServiceDetailScreen(args));
       case Routes.updateListingRoute:
         final args = settings.arguments as HomestayModel;
         return MaterialPageRoute(
@@ -62,6 +61,8 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const ProfileEditScreen());
       case Routes.supportRoute:
         return MaterialPageRoute(builder: (_) => const SupportScreen());
+      case Routes.recentChats:
+        return MaterialPageRoute(builder: (_) => const RecentChatScreen());
       default:
         return unDefinedRoute();
     }

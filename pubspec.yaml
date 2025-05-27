@@ -48,9 +48,9 @@ dependencies:
   flutter_riverpod: ^2.6.1
 
   # chats
-  flutter_firebase_chat_core: ^1.6.8
+  flutter_firebase_chat_core: ^1.6.7
   flutter_chat_types: ^3.6.2
-  flutter_chat_ui: ^2.1.1
+  flutter_chat_ui: ^1.6.10
 
   # http client
   dio: ^5.8.0+1

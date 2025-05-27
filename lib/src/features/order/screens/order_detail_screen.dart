@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:homestay_host/src/common/widgets/build_button.dart';
 import 'package:homestay_host/src/features/auth/screens/widgets/build_dialogs.dart';
+import 'package:homestay_host/src/features/chat/data/chat_provider.dart';
+import 'package:homestay_host/src/features/chat/screens/chat_screen.dart';
 import 'package:homestay_host/src/features/order/data/order_datasource.dart';
 import 'package:homestay_host/src/features/order/data/order_provider.dart';
 import 'package:homestay_host/src/features/order/domain/models/order_model.dart'; // Ensure this path is correct
@@ -445,32 +447,29 @@ class _OrderDetailScreenState extends ConsumerState<OrderDetailScreen> {
     if (status == OrderStatus.accepted) {
       return BuildButton(
         onPressed: () async {
-          // final navigator = Navigator.of(context);
-          // final currentUser = FirebaseAuth.instance.currentUser!.uid;
-          // final scaffoldMessage = ScaffoldMessenger.of(context);
-          // final response = await ref.read(roomProvider).createRoom(data.user); // Assuming roomProvider is available
-          // final otherUser = response?.users.firstWhere(
-          //   (element) => element.id != currentUser,
-          //   orElse: () => data.user, // Fallback, ensure data.user is compatible
-          // );
-          // if (response != null && otherUser != null) {
-          //   navigator.push(
-          //     MaterialPageRoute(
-          //       builder: (_) =>
-          //           ChatScreen(room: response, name: otherUser.firstName ?? 'Customer'), // Assuming ChatScreen is available
-          //     ),
-          //   );
-          // } else {
-          //   scaffoldMessage.showSnackBar(
-          //     const SnackBar(
-          //       duration: Duration(milliseconds: 1500),
-          //       content: Text("Could not initiate chat."),
-          //     ),
-          //   );
-          // }
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Message Customer: Placeholder")),
+          final navigator = Navigator.of(context);
+          final currentUser = FirebaseAuth.instance.currentUser!.uid;
+          final scaffoldMessage = ScaffoldMessenger.of(context);
+          final response = await ref.read(roomProvider).createRoom(data.user);
+          final otherUser = response?.users.firstWhere(
+            (element) => element.id != currentUser,
           );
+          if (response != null) {
+            navigator.push(
+              MaterialPageRoute(
+                builder:
+                    (_) =>
+                        ChatScreen(room: response, name: otherUser!.firstName!),
+              ),
+            );
+          } else {
+            scaffoldMessage.showSnackBar(
+              const SnackBar(
+                duration: Duration(milliseconds: 1500),
+                content: Text("something went wrong"),
+              ),
+            );
+          }
         },
         buttonWidget: Text('Message Customer'),
       );
