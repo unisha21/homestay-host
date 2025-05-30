@@ -1,3 +1,5 @@
+import 'package:homestay_host/src/features/review/domain/review_model.dart';
+
 class HomestayModel {
   final String id;
   final String hostId;
@@ -8,6 +10,7 @@ class HomestayModel {
   final List<String> amenities;
   final List<String> images;
   final List<NearByPlace>? nearByPlaces;
+  final List<ReviewModel>? reviews; 
 
   HomestayModel({
     required this.id,
@@ -19,6 +22,7 @@ class HomestayModel {
     required this.amenities,
     required this.images,
     this.nearByPlaces,
+    this.reviews = const [],
   });
 
   factory HomestayModel.fromJson(Map<String, dynamic> json) {
@@ -34,6 +38,7 @@ class HomestayModel {
       nearByPlaces: (json['nearByPlaces'] as List<dynamic>?)
           ?.map((e) => NearByPlace.fromJson(e as Map<String, dynamic>))
           .toList(),
+      reviews: json['reviews'],
     );
   }
 

@@ -5,11 +5,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:homestay_host/src/features/homestay/domain/models/homestay_model.dart';
 import 'package:homestay_host/src/features/homestay/domain/models/homestay_payload.dart';
+import 'package:homestay_host/src/features/review/domain/review_model.dart';
 import 'package:path/path.dart' as p;
 
 class HomestayDatasource {
   final homestayDb = FirebaseFirestore.instance.collection('homestays');
   final _userDb = FirebaseFirestore.instance.collection('users');
+  final _reviewDb = FirebaseFirestore.instance.collection('reviews');
+
   final _storage = FirebaseStorage.instance;
   final uid = FirebaseAuth.instance.currentUser!.uid;
 
@@ -70,9 +73,11 @@ class HomestayDatasource {
       final homestayList = await Future.wait(
         response.docs.map((doc) async {
           final data = doc.data();
+          final reviews = await getReview(doc.id);
           return HomestayModel.fromJson({
             ...data,
             'id': doc.id,
+            'reviews': reviews,
           });
         }),
       );
@@ -102,12 +107,26 @@ class HomestayDatasource {
   }
 
   Future<String> deleteHomeStay(String homeStayid) async {
-    print('Deleting homestay with ID: $homeStayid');
     try {
       await homestayDb.doc(homeStayid).delete();
       return 'success';
-    } on FirebaseException catch(e) {
+    } on FirebaseException catch (e) {
       return e.message ?? 'Failed to delete home stay';
+    }
+  }
+
+  Future<List<ReviewModel>> getReview(String id) async {
+    try {
+      final response = await _reviewDb.where('homeStayId', isEqualTo: id).get();
+      final reviewList = await Future.wait(
+        response.docs.map((doc) async {
+          final json = doc.data();
+          return ReviewModel.fromJson({...json, 'reviewId': doc.id});
+        }),
+      );
+      return reviewList;
+    } on FirebaseException catch (err) {
+      throw '$err';
     }
   }
 }

@@ -62,7 +62,7 @@ class ListingCard extends StatelessWidget {
 
   const ListingCard({super.key, required this.homestay});
 
-    String get formattedPrice {
+  String get formattedPrice {
     final price = homestay.pricePerNight;
     final formatter = NumberFormat.currency(
       locale: 'en_US',
@@ -72,10 +72,27 @@ class ListingCard extends StatelessWidget {
     return formatter.format(price);
   }
 
+  double get averageRating {
+    final reviewList = homestay.reviews;
+    double rating =
+        reviewList!.isEmpty
+            ? 0
+            : double.parse(
+              (reviewList
+                          .map((e) {
+                            return e.rating;
+                          })
+                          .reduce((value, element) => value + element) /
+                      reviewList.length)
+                  .toStringAsFixed(1),
+            );
+    return rating;
+  }
+
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: (){
+      onTap: () {
         Navigator.pushNamed(
           context,
           Routes.serviceDetailRoute,
@@ -154,10 +171,11 @@ class ListingCard extends StatelessWidget {
                             children: [
                               TextSpan(
                                 text: '/ night',
-                                style: context.theme.textTheme.bodySmall?.copyWith(
-                                  fontWeight: FontWeight.w400,
-                                  color: Colors.grey.shade600,
-                                ),
+                                style: context.theme.textTheme.bodySmall
+                                    ?.copyWith(
+                                      fontWeight: FontWeight.w400,
+                                      color: Colors.grey.shade600,
+                                    ),
                               ),
                             ],
                           ),
@@ -165,22 +183,23 @@ class ListingCard extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.star,
-                          color: context.theme.colorScheme.secondary,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                         '4.2',
-                          style: context.theme.textTheme.bodyLarge?.copyWith(
-                            fontWeight: FontWeight.w500,
-                            color: Colors.grey.shade600,
+                    if (averageRating > 0)
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.star,
+                            color: context.theme.colorScheme.secondary,
                           ),
-                        ),
-                      ],
-                    ),
+                          const SizedBox(width: 4),
+                          Text(
+                            averageRating.toStringAsFixed(1),
+                            style: context.theme.textTheme.bodyLarge?.copyWith(
+                              fontWeight: FontWeight.w500,
+                              color: Colors.grey.shade600,
+                            ),
+                          ),
+                        ],
+                      ),
                   ],
                 ),
               ),

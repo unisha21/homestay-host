@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:homestay_host/src/common/helper/time_distance_function.dart';
 import 'package:homestay_host/src/features/homestay/domain/models/homestay_model.dart';
 import 'package:homestay_host/src/features/homestay/screens/widgets/carousel_image.dart';
+import 'package:homestay_host/src/features/review/domain/review_model.dart';
+import 'package:homestay_host/src/themes/export_themes.dart';
 import 'package:homestay_host/src/themes/extensions.dart';
 
 class ServiceDetailScreen extends StatefulWidget {
@@ -14,6 +17,18 @@ class ServiceDetailScreen extends StatefulWidget {
 class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
   @override
   Widget build(BuildContext context) {
+    final reviewList = widget._homestay.reviews ?? [];
+    num totalRating =
+        reviewList.isEmpty
+            ? 0
+            : num.parse(
+              (reviewList
+                          .map((e) => e.rating)
+                          .reduce((value, element) => value + element) /
+                      reviewList.length)
+                  .toStringAsFixed(1),
+            );
+    int totalReview = reviewList.length;
     return Scaffold(
       body: Column(
         spacing: 16,
@@ -60,10 +75,29 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
                           widget._homestay.title,
                           style: context.theme.textTheme.titleLarge,
                         ),
-                        Text(
-                          '4.2 ⭐',
-                          style: context.theme.textTheme.bodyMedium?.copyWith(
-                            fontWeight: FontWeight.w600,
+                        TextButton(
+                          onPressed: () {
+                            totalReview > 0
+                                ? buildShowModalBottomSheet(context, reviewList)
+                                : null;
+                          },
+                          child: RichText(
+                            text: TextSpan(
+                              children: [
+                                TextSpan(
+                                  text: '⭐ $totalRating ',
+                                  style: Theme.of(context).textTheme.titleMedium
+                                      ?.copyWith(fontWeight: FontWeight.bold),
+                                ),
+                                TextSpan(
+                                  text:
+                                      totalReview > 1
+                                          ? '($totalReview Reviews)'
+                                          : '($totalReview Review)',
+                                  style: Theme.of(context).textTheme.bodyMedium,
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ],
@@ -99,13 +133,127 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
                   ),
                   _IncludedAmenities(amenities: widget._homestay.amenities),
                   const SizedBox(height: 4),
-                  NearByPlaces(nearByPlaces: widget._homestay.nearByPlaces ?? []),
+                  NearByPlaces(
+                    nearByPlaces: widget._homestay.nearByPlaces ?? [],
+                  ),
                 ],
               ),
             ),
           ),
         ],
       ),
+    );
+  }
+
+  Future<dynamic> buildShowModalBottomSheet(
+    BuildContext context,
+    List<ReviewModel> reviewList,
+  ) {
+    return showModalBottomSheet(
+      useSafeArea: true,
+      showDragHandle: true,
+      isScrollControlled: true,
+      context: context,
+      builder: (context) {
+        return Container(
+          padding: EdgeInsets.all(18),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text("Reviews", style: Theme.of(context).textTheme.titleLarge),
+                SizedBox(height: 20),
+                ListView.separated(
+                  shrinkWrap: true,
+                  itemBuilder: (context, index) {
+                    final review = reviewList[index];
+                    final userName = review.userName.split(" ");
+                    return SizedBox(
+                      width: double.infinity,
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          CircleAvatar(
+                            radius: 32,
+                            backgroundColor: AppColor.secondaryColor,
+                            child: Center(
+                              child: Text(userName[0][0] + userName[1][0]),
+                            ),
+                          ),
+                          SizedBox(width: 15),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      review.userName,
+                                      style:
+                                          Theme.of(context).textTheme.bodyLarge,
+                                    ),
+                                    Text(
+                                      '${formatDistanceToNowStrict(review.createdAt)} ago',
+                                      style:
+                                          Theme.of(
+                                            context,
+                                          ).textTheme.labelMedium,
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: 5),
+                                Row(
+                                  children: [
+                                    Row(
+                                      children: List.generate(
+                                        review.rating.floor(),
+                                        (index) => const Icon(
+                                          Icons.star_rate_rounded,
+                                          color: Color(0xffffc700),
+                                        ),
+                                      ),
+                                    ),
+                                    if (review.rating % 1 != 0)
+                                      const Icon(
+                                        Icons.star_half_rounded,
+                                        color: Color(0xffffc700),
+                                      ),
+                                    Row(
+                                      children: List.generate(
+                                        5 - review.rating.ceil(),
+                                        (index) => Icon(
+                                          Icons.star_border_rounded,
+                                          color: Colors.grey.shade500,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: 5),
+                                Text(
+                                  review.review,
+                                  style: Theme.of(context).textTheme.bodyMedium,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                  separatorBuilder: (context, index) => SizedBox(height: 28),
+                  itemCount: reviewList.length,
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }
@@ -155,14 +303,13 @@ class _IncludedAmenities extends StatelessWidget {
   }
 }
 
-
 class NearByPlaces extends StatelessWidget {
   final List<NearByPlace> nearByPlaces;
   const NearByPlaces({super.key, required this.nearByPlaces});
 
   @override
   Widget build(BuildContext context) {
-    if(nearByPlaces.isEmpty) {
+    if (nearByPlaces.isEmpty) {
       return SizedBox.shrink();
     }
     return Column(
@@ -206,7 +353,6 @@ class NearByPlaces extends StatelessWidget {
             ),
           ),
         ),
-        
       ],
     );
   }
