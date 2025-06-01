@@ -37,29 +37,29 @@ class HomeScreen extends StatelessWidget {
           },
         ),
         centerTitle: true,
-        actions: [
-          InkWell(
-            splashFactory: InkRipple.splashFactory,
-            onTap: () {
-              // Navigator.pushNamed(context, '/search');
-            },
-            child: Padding(
-              padding: EdgeInsets.only(right: 10),
-              child: Container(
-                padding: EdgeInsets.all(5.5),
-                width: 32,
-                height: 32,
-                child: SvgPicture.asset(
-                  "assets/icons/search.svg",
-                  colorFilter: ColorFilter.mode(
-                    Colors.grey.shade700,
-                    BlendMode.srcIn,
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ],
+        // actions: [
+        //   InkWell(
+        //     splashFactory: InkRipple.splashFactory,
+        //     onTap: () {
+        //       // Navigator.pushNamed(context, '/search');
+        //     },
+        //     child: Padding(
+        //       padding: EdgeInsets.only(right: 10),
+        //       child: Container(
+        //         padding: EdgeInsets.all(5.5),
+        //         width: 32,
+        //         height: 32,
+        //         child: SvgPicture.asset(
+        //           "assets/icons/search.svg",
+        //           colorFilter: ColorFilter.mode(
+        //             Colors.grey.shade700,
+        //             BlendMode.srcIn,
+        //           ),
+        //         ),
+        //       ),
+        //     ),
+        //   ),
+        // ],
       ),
       drawer: MyDrawer(),
       body: SingleChildScrollView(
