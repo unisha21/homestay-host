@@ -117,12 +117,10 @@ class MyDrawer extends ConsumerWidget {
                 ),
                 onTap: () {
                   Navigator.pop(context);
-                  // Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(
-                  //     builder: (_) => const NotificationScreen(),
-                  //   ),
-                  // );
+                  Navigator.pushNamed(
+                    context,
+                    Routes.notificationRoute,
+                  );
                 },
               ),
               ListTile(

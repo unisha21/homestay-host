@@ -112,8 +112,8 @@ class OrderDataSource{
         'body': 'Your order for ${orderModel.homeStayId} has been declined',
         'notificationType': 'order',
         'orderId': orderModel.orderId,
-        'senderId': orderModel.orderDetail.customerId,
-        'receiverId': orderModel.hostId,
+        'senderId': orderModel.hostId,
+        'receiverId': orderModel.orderDetail.customerId,
         'isRead': false,
         'createdAt': "${DateTime.now()}",
         'data': {

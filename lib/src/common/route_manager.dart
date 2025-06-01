@@ -9,6 +9,7 @@ import 'package:homestay_host/src/features/homestay/screens/create_listing.dart'
 import 'package:homestay_host/src/features/homestay/screens/listing_screen.dart';
 import 'package:homestay_host/src/features/homestay/screens/service_detail_screen.dart';
 import 'package:homestay_host/src/features/homestay/screens/update_homestay.dart';
+import 'package:homestay_host/src/features/notification/screens/notification_screen.dart';
 import 'package:homestay_host/src/features/payment/screens/payment_history_screen.dart';
 import 'package:homestay_host/src/features/profile/screens/profile_edit_screen.dart';
 import 'package:homestay_host/src/features/profile/screens/profile_screen.dart';
@@ -58,6 +59,8 @@ class RouteGenerator {
         );
       case Routes.profileRoute:
         return MaterialPageRoute(builder: (_) => const ProfileScreen());
+      case Routes.notificationRoute:
+        return MaterialPageRoute(builder: (_) => const NotificationScreen());
       case Routes.profileEditRoute:
         return MaterialPageRoute(builder: (_) => const ProfileEditScreen());
       case Routes.supportRoute:
