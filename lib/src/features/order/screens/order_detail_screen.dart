@@ -5,6 +5,7 @@ import 'package:homestay_host/src/common/widgets/build_button.dart';
 import 'package:homestay_host/src/features/auth/screens/widgets/build_dialogs.dart';
 import 'package:homestay_host/src/features/chat/data/chat_provider.dart';
 import 'package:homestay_host/src/features/chat/screens/chat_screen.dart';
+import 'package:homestay_host/src/features/notification/data/notification_datasource.dart';
 import 'package:homestay_host/src/features/order/data/order_datasource.dart';
 import 'package:homestay_host/src/features/order/data/order_provider.dart';
 import 'package:homestay_host/src/features/order/domain/models/order_model.dart'; // Ensure this path is correct
@@ -582,62 +583,40 @@ class _OrderDetailScreenState extends ConsumerState<OrderDetailScreen> {
                   },
                 ),
                 const SizedBox(height: 24),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      textStyle: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    onPressed: () async {
-                      if (_formKey.currentState!.validate()) {
-                        // final navigator = Navigator.of(modalContext); // Use modalContext's navigator
-                        // buildLoadingDialog(modalContext, 'Rejecting Order...');
-
-                        // // final response = await ref.read(
-                        // //   rejectOrderProvider(orderData.orderId).future,
-                        // // ); // This seems to be a Riverpod specific call
-                        // // Placeholder for actual rejection logic:
-                        // final response = await OrderDataSource().updateOrderStatus(orderId: orderData.orderId, status: OrderStatus.rejected.index, reason: _reasonController.text.trim());
-
-                        // if (!mounted) return; // Check if the main widget is still mounted
-                        // Navigator.pop(modalContext); // Pop loading dialog
-
-                        // if (response == 'Status Updated') { // Assuming this is the success string
-                        //   // await NotificationDataSource().sendNotification(
-                        //   //   token: orderData.user.metadata?['deviceToken'],
-                        //   //   title: 'Order Rejected',
-                        //   //   message: 'Your order for ${orderData.orderDetail.homeStayName} has been rejected. Reason: ${_reasonController.text.trim()}',
-                        //   //   notificationData: {
-                        //   //     'click_action': 'FLUTTER_NOTIFICATION_CLICK',
-                        //   //     'type': 'order',
-                        //   //     'route': 'notification', // Or specific order detail route for user
-                        //   //   },
-                        //   // );
-                        //   // await OrderDataSource().rejectNotification( // This seems like a custom method
-                        //   //   orderModel: orderData,
-                        //   //   reason: _reasonController.text.trim(),
-                        //   // );
-                        //    ref.invalidate(orderDetailProvider(widget.orderId)); // Refresh data
-                        //    ref.invalidate(orderProvider); // Refresh list if any
-
-                        //   navigator.pop(); // Pop modal bottom sheet
-                        //   if (mounted && Navigator.canPop(context)) {
-                        //      // Navigator.pop(context); // Pop order detail screen if needed, or just refresh
-                        //   }
-                        //    ScaffoldMessenger.of(context).showSnackBar(
-                        //     const SnackBar(content: Text('Order rejected successfully.'), backgroundColor: Colors.green),
-                        //   );
-                        // } else {
-                        //    buildErrorDialog(context, "Failed to reject order. ${response}");
-                        // }
+                BuildButton(
+                  onPressed: () async {
+                    final navigator = Navigator.of(context);
+                    if (_formKey.currentState!.validate()) {
+                      buildLoadingDialog(context, 'Rejecting');
+                      final response = await ref.read(
+                        rejectOrderProvider(orderData.orderId).future,
+                      );
+                      if (response == 'Order Rejected') {
+                        NotificationDataSource().sendNotification(
+                          token: orderData.user.metadata?['deviceToken'],
+                          title: 'Order Rejected',
+                          message: 'Your order has been rejected',
+                          notificationData: {
+                            'click_action': 'FLUTTER_NOTIFICATION_CLICK',
+                            'type': 'order',
+                            'route': 'notification',
+                          },
+                        ).catchError(
+                          (error) {
+                            print('Error sending notification: $error');
+                          },
+                        );
+                        await OrderDataSource().rejectNotification(
+                          orderModel: orderData,
+                          reason: _reasonController.text.trim(),
+                        );
                       }
-                    },
-                    child: const Text('Submit Rejection'),
-                  ),
+                      navigator.pop();
+                      navigator.pop();
+                      navigator.pop();
+                    }
+                  },
+                  buttonWidget: const Text('Submit'),
                 ),
                 const SizedBox(height: 40), // Padding for keyboard
               ],

@@ -6,6 +6,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:homestay_host/src/app/app.dart';
 
+@pragma('vm:entry-point')
 Future<void> handleBackgroundMessage(RemoteMessage? message) async {
   await Firebase.initializeApp();
   final authData = await FirebaseAuth.instance.authStateChanges().last;

@@ -105,26 +105,26 @@ class OrderDataSource{
     }
   }
 
-  // Future<String> rejectNotification({required OrderModel orderModel, required String reason}) async {
-  //   try {
-  //     await _notificationDb.add({
-  //       'title': 'Order Declined',
-  //       'body': 'Your order for ${orderModel.menuName} has been declined',
-  //       'notificationType': 'order',
-  //       'orderId': orderModel.orderId,
-  //       'senderId': orderModel.orderDetail.customerId,
-  //       'receiverId': orderModel.catererId,
-  //       'isRead': false,
-  //       'createdAt': "${DateTime.now()}",
-  //       'data': {
-  //         'reason': reason,
-  //         'orderInfo': orderModel.toJson()
-  //       },
-  //     });
-  //     return 'Order cancelled';
-  //   } on FirebaseException catch (err) {
-  //     throw '$err';
-  //   }
-  // }
+  Future<String> rejectNotification({required OrderModel orderModel, required String reason}) async {
+    try {
+      await _notificationDb.add({
+        'title': 'Order Declined',
+        'body': 'Your order for ${orderModel.homeStayId} has been declined',
+        'notificationType': 'order',
+        'orderId': orderModel.orderId,
+        'senderId': orderModel.orderDetail.customerId,
+        'receiverId': orderModel.hostId,
+        'isRead': false,
+        'createdAt': "${DateTime.now()}",
+        'data': {
+          'reason': reason,
+          'orderInfo': orderModel.toJson()
+        },
+      });
+      return 'Order cancelled';
+    } on FirebaseException catch (err) {
+      throw '$err';
+    }
+  }
 
 }
