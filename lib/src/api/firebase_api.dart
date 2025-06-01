@@ -5,6 +5,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:homestay_host/src/app/app.dart';
+import 'package:homestay_host/src/common/route_manager.dart';
 
 @pragma('vm:entry-point')
 Future<void> handleBackgroundMessage(RemoteMessage? message) async {
@@ -16,7 +17,7 @@ Future<void> handleBackgroundMessage(RemoteMessage? message) async {
     if(route == "chat"){
       navigatorKey.currentState?.pushNamed('/recent-chat');
     }else if(route == "order"){
-      navigatorKey.currentState?.pushNamed('/order-list');
+      navigatorKey.currentState?.pushNamed(Routes.orderListRoute);
     }else{
       navigatorKey.currentState?.pushNamed('/notification');
     }

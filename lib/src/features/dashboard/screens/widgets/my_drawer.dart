@@ -131,9 +131,9 @@ class MyDrawer extends ConsumerWidget {
                 ),
                 onTap: () {
                   Navigator.pop(context);
-                  Navigator.push(
+                  Navigator.pushNamed(
                     context,
-                    MaterialPageRoute(builder: (_) => const OrderScreen()),
+                    Routes.orderListRoute,
                   );
                 },
               ),
