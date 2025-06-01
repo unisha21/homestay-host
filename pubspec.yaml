@@ -54,7 +54,7 @@ dependencies:
   flutter_chat_ui: ^1.6.10
 
   # http client
-  dio: ^5.8.0+1
+  dio: ^5.4.0
 
   # utils
   intl: ^0.20.2
