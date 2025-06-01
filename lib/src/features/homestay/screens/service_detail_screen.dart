@@ -5,6 +5,7 @@ import 'package:homestay_host/src/features/homestay/screens/widgets/carousel_ima
 import 'package:homestay_host/src/features/review/domain/review_model.dart';
 import 'package:homestay_host/src/themes/export_themes.dart';
 import 'package:homestay_host/src/themes/extensions.dart';
+import 'package:intl/intl.dart';
 
 class ServiceDetailScreen extends StatefulWidget {
   final HomestayModel _homestay;
@@ -104,16 +105,28 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
                     ),
                   ),
                   Row(
-                    spacing: 8,
                     children: [
-                      Icon(
-                        Icons.pin_drop_outlined,
-                        color: context.theme.colorScheme.primary,
-                        size: 16,
+                      Row(
+                        spacing: 8,
+                        children: [
+                          Icon(
+                            Icons.pin_drop_outlined,
+                            color: context.theme.colorScheme.primary,
+                            size: 16,
+                          ),
+                          Text(
+                            widget._homestay.location,
+                            style: context.theme.textTheme.bodyMedium,
+                          ),
+                        ],
                       ),
+                      const Spacer(),
                       Text(
-                        widget._homestay.location,
-                        style: context.theme.textTheme.bodyMedium,
+                        NumberFormat.currency(
+                          locale: 'en_np',
+                          symbol: 'NPR ',
+                          decimalDigits: 2,
+                        ).format(widget._homestay.pricePerNight),
                       ),
                     ],
                   ),
